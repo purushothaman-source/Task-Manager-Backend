@@ -23,9 +23,17 @@ router.post("/tasks", auth, async (req, res) => {
 router.get("/tasks", auth, async (req, res) => {
   const match = {};
   const sort = {};
+  let label1 = req.query.labels.replace("[", "");
+  let label2 = label1.replace("]", "");
+  let label3 = label2.replace(/"/g, "");
 
+  let arr = label3.split(",");
   if (req.query.completed) {
-    match.completed = req.query.completed === "true";
+    match.completed = req.query.completed;
+  }
+
+  if (req.query.labels) {
+    match.labels = arr;
   }
 
   if (req.query.sortBy) {
@@ -33,20 +41,20 @@ router.get("/tasks", auth, async (req, res) => {
     sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
   }
   try {
-    await req.user
-      .populate({
-        path: "tasks",
-        match,
-        options: {
-          limit: parseInt(req.query.limit),
-          skip: parseInt(req.query.skip),
-          sort
-        }
-      })
-      .execPopulate();
+    await req.user?.populate({
+      path: "tasks",
+      match,
+      options: {
+        limit: parseInt(req.query.limit),
+        skip: parseInt(req.query.skip),
+        sort
+      }
+    });
+    // .exec();
     res.send(req.user.tasks);
   } catch (e) {
-    res.status(500).send();
+    console.log("error", e);
+    res.status(500).send(e);
   }
 });
 
@@ -68,7 +76,7 @@ router.get("/tasks/:id", auth, async (req, res) => {
 
 router.patch("/tasks/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["description", "completed"];
+  const allowedUpdates = ["description", "completed", "labels"];
   const isValidOperation = updates.every(update =>
     allowedUpdates.includes(update)
   );
