@@ -114,7 +114,7 @@ router.get("/users/me", auth, async (req, res) => {
   res.send(req.user);
 });
 
-router.get("/users/:id", async (req, res) => {
+router.get("/users/:id", auth, async (req, res) => {
   const _id = req.params.id;
 
   try {
@@ -130,7 +130,7 @@ router.get("/users/:id", async (req, res) => {
   }
 });
 
-router.patch("/users/me", async (req, res) => {
+router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "email", "password", "age"];
   const isValidOperation = updates.every(update =>
@@ -156,7 +156,7 @@ router.delete("/users/me/avatar", auth, async (req, res) => {
   res.send();
 });
 
-router.delete("/users/me", async (req, res) => {
+router.delete("/users/me", auth, async (req, res) => {
   try {
     await req.user.remove();
     res.send(req.user);
