@@ -23,17 +23,13 @@ router.post("/tasks", auth, async (req, res) => {
 router.get("/tasks", auth, async (req, res) => {
   const match = {};
   const sort = {};
-  let label1 = req.query.labels.replace("[", "");
-  let label2 = label1.replace("]", "");
-  let label3 = label2.replace(/"/g, "");
 
-  let arr = label3.split(",");
   if (req.query.completed) {
     match.completed = req.query.completed;
   }
 
   if (req.query.labels) {
-    match.labels = arr;
+    match.labels = req.query.labels;
   }
 
   if (req.query.sortBy) {
