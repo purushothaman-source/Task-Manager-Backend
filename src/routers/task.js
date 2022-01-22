@@ -36,6 +36,16 @@ router.get("/tasks", auth, async (req, res) => {
     const parts = req.query.sortBy.split(":");
     sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
   }
+  if (req.query.isDeleted) {
+    match.isDeleted = req.query.isDeleted;
+  }
+  if (req.query.isArchived) {
+    match.isArchived = req.query.isArchived;
+  }
+  if (req.query.isPinned) {
+    match.isPinned = req.query.isPinned;
+  }
+
   try {
     await req.user?.populate({
       path: "tasks",
@@ -72,7 +82,15 @@ router.get("/tasks/:id", auth, async (req, res) => {
 
 router.patch("/tasks/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["description", "completed", "labels"];
+  const allowedUpdates = [
+    "description",
+    "completed",
+    "labels",
+    "tasks",
+    "isDeleted",
+    "isArchived",
+    "isPinned"
+  ];
   const isValidOperation = updates.every(update =>
     allowedUpdates.includes(update)
   );

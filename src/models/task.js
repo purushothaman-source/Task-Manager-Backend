@@ -7,7 +7,29 @@ const taskSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    title: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    color: {
+      type: String,
+      required: true,
+      trim: true
+    },
     completed: {
+      type: Boolean,
+      default: false
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    },
+    isArchived: {
+      type: Boolean,
+      default: false
+    },
+    isPinned: {
       type: Boolean,
       default: false
     },
